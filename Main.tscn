@@ -1,3 +1,131 @@
-[gd_scene format=3 uid="uid://drg0huc0kbqwj"]
+[gd_scene load_steps=23 format=3 uid="uid://drg0huc0kbqwj"]
 
-[node name="Node3D" type="Node3D"]
+[ext_resource type="Material" uid="uid://c1jlsf05or548" path="res://Materials/Rock.tres" id="1_60bpq"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_p1oq3"]
+[ext_resource type="Material" uid="uid://dl5jm8ifcpfc" path="res://addons/zylann.hterrain/tools/texture_editor/display_alpha_material.tres" id="1_uvkay"]
+[ext_resource type="Resource" path="res://TerrainData/data.hterrain" id="2_o4jo8"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_vdnnf"]
+[ext_resource type="Texture2D" uid="uid://cxenp4pwbl1s0" path="res://Textures/TerrainTextures/Main_slot2_albedo_bump.png" id="4_unsc8"]
+[ext_resource type="Texture2D" uid="uid://dqhw43ln82k8g" path="res://Textures/TerrainTextures/Main_slot2_normal_roughness.png" id="5_57cet"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_detail_layer.gd" id="8_2yntv"]
+[ext_resource type="Script" path="res://Scrips/player.gd" id="8_xpouo"]
+[ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="9_nj35r"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wpjo8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vex2p"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sy8qk"]
+load_path = "res://.godot/imported/Main_slot0_albedo_bump.png-7b110bc0cfb8813eb18d63f0a7f0f53f.s3tc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gseal"]
+load_path = "res://.godot/imported/Main_slot1_albedo_bump.png-0b8ac72bbc3413991858a6443e79cbd8.s3tc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_7x4kb"]
+load_path = "res://.godot/imported/Main_slot0_normal_roughness.png-d58d515d4f478e7a9b03f315e78168c5.s3tc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sxir3"]
+load_path = "res://.godot/imported/Main_slot1_normal_roughness.png-7b99383ec778711614aada585e933724.s3tc.ctex"
+
+[sub_resource type="Resource" id="Resource_1eucg"]
+script = ExtResource("3_vdnnf")
+mode = 0
+textures = [[SubResource("CompressedTexture2D_sy8qk"), SubResource("CompressedTexture2D_gseal"), ExtResource("4_unsc8")], [SubResource("CompressedTexture2D_7x4kb"), SubResource("CompressedTexture2D_sxir3"), ExtResource("5_57cet")]]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2jgbd"]
+sky_horizon_color = Color(0.641281, 0.657111, 0.677277, 1)
+ground_bottom_color = Color(0.180123, 0.174443, 0.159107, 1)
+ground_horizon_color = Color(0.641281, 0.657111, 0.677277, 1)
+
+[sub_resource type="Sky" id="Sky_dshy2"]
+sky_material = SubResource("ProceduralSkyMaterial_2jgbd")
+
+[sub_resource type="Environment" id="Environment_7wack"]
+background_mode = 2
+sky = SubResource("Sky_dshy2")
+tonemap_mode = 2
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s250m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_uww4d"]
+height = 1.0
+
+[node name="world" type="Node3D"]
+
+[node name="Block" type="StaticBody3D" parent="."]
+transform = Transform3D(20, 0, 0, 0, 3, 0, 0, 0, 20, 15.4825, 3.50734, 5.263)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Block"]
+shape = SubResource("BoxShape3D_wpjo8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Block"]
+material_override = ExtResource("1_60bpq")
+mesh = SubResource("BoxMesh_vex2p")
+skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_uvkay")
+
+[node name="HTerrain" type="Node3D" parent="."]
+script = ExtResource("1_p1oq3")
+map_scale = Vector3(0.5, 0.5, 0.5)
+centered = true
+_terrain_data = ExtResource("2_o4jo8")
+chunk_size = 32
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_1eucg")
+render_layers = 1
+cast_shadow = 1
+shader_params/u_ground_uv_scale = 8.0
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = true
+shader_params/u_tile_reduction = Vector4(1, 1, 1, 1)
+
+[node name="HTerrainDetailLayer" type="Node3D" parent="HTerrain"]
+script = ExtResource("8_2yntv")
+shader_params/u_globalmap_tint_bottom = null
+shader_params/u_globalmap_tint_top = null
+shader_params/u_bottom_ao = null
+shader_params/u_instance_scale = null
+shader_params/u_roughness = null
+metadata/_editor_icon = ExtResource("9_nj35r")
+
+[node name="Env" type="Node3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Env"]
+transform = Transform3D(-0.791224, -0.288978, 0.538941, 0, 0.881303, 0.472551, -0.611527, 0.373894, -0.697308, 0, 7.91079, 0)
+light_energy = 0.5
+shadow_enabled = true
+directional_shadow_max_distance = 101.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Env"]
+environment = SubResource("Environment_7wack")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("8_xpouo")
+sprint_speed = 7.5
+jump_velocity = 4.5
+
+[node name="StandingCollision" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.999586, 0)
+shape = SubResource("CapsuleShape3D_s250m")
+
+[node name="CrouchingCollision" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.521412, 0)
+shape = SubResource("CapsuleShape3D_uww4d")
+disabled = true
+
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+
+[node name="RayCast3D" type="RayCast3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.01517, 0)
+target_position = Vector3(0, 1, 0)
+debug_shape_custom_color = Color(0, 0, 1, 1)
+debug_shape_thickness = 5
