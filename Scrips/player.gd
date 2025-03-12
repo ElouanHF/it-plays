@@ -5,10 +5,12 @@ extends CharacterBody3D
 @onready var crouching_collision: CollisionShape3D = $CrouchingCollision
 @onready var ray_cast_3d: RayCast3D = $RayCast3D
 @onready var main = $"../"
+@onready var flashlight: Node3D = $Head/Flashlight
 
 var speed_current = 0
 var direction = Vector3.ZERO
 var initial_head_pos: float
+var flashlight_on = true
 
 @export var walk_speed = 5.0
 @export var sprint_speed = 10.0
@@ -28,6 +30,9 @@ func _input(event: InputEvent) -> void:
 		rotate_y(deg_to_rad(-event.relative.x * mouse_sens))
 		head.rotate_x(deg_to_rad(-event.relative.y * mouse_sens))
 		head.rotation.x = clamp(head.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+	
+	if event.is_action_pressed("flashlight"):
+		toggleLight()
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("crouch") and is_on_floor():
@@ -64,3 +69,11 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, speed_current)
 
 	move_and_slide()
+
+func toggleLight():
+	if flashlight_on:
+			flashlight.hide()
+			flashlight_on = false
+	else:
+		flashlight.show()
+		flashlight_on = true
