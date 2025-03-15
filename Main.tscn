@@ -1,10 +1,10 @@
-[gd_scene load_steps=28 format=3 uid="uid://drg0huc0kbqwj"]
+[gd_scene load_steps=29 format=3 uid="uid://drg0huc0kbqwj"]
 
 [ext_resource type="Material" uid="uid://c1jlsf05or548" path="res://Materials/Rock.tres" id="1_60bpq"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_p1oq3"]
 [ext_resource type="Script" path="res://Scrips/main.gd" id="1_uof31"]
 [ext_resource type="Material" uid="uid://dl5jm8ifcpfc" path="res://addons/zylann.hterrain/tools/texture_editor/display_alpha_material.tres" id="1_uvkay"]
-[ext_resource type="Resource" path="res://TerrainData/data.hterrain" id="2_o4jo8"]
+[ext_resource type="Resource" path="res://H TerrainData/data.hterrain" id="2_o4jo8"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_vdnnf"]
 [ext_resource type="Texture2D" uid="uid://cxenp4pwbl1s0" path="res://Textures/TerrainTextures/Main_slot2_albedo_bump.png" id="4_unsc8"]
 [ext_resource type="Texture2D" uid="uid://dqhw43ln82k8g" path="res://Textures/TerrainTextures/Main_slot2_normal_roughness.png" id="5_57cet"]
@@ -15,6 +15,7 @@
 [ext_resource type="Shader" path="res://addons/zylann.hterrain/shaders/detail.gdshader" id="11_u613d"]
 [ext_resource type="ArrayMesh" uid="uid://dpef2d0qcn5d4" path="res://addons/zylann.hterrain/models/grass_quad_x2.obj" id="12_qaxrm"]
 [ext_resource type="PackedScene" uid="uid://cdgrbnh35w6ji" path="res://PauseMenu.tscn" id="12_s3cn2"]
+[ext_resource type="Texture2D" uid="uid://dvdxn14ubdmy8" path="res://Materials/NightSkyHDRI014_1K-HDR.exr" id="14_jy5sk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wpjo8"]
 
@@ -37,20 +38,17 @@ script = ExtResource("3_vdnnf")
 mode = 0
 textures = [[SubResource("CompressedTexture2D_sy8qk"), SubResource("CompressedTexture2D_gseal"), ExtResource("4_unsc8")], [SubResource("CompressedTexture2D_7x4kb"), SubResource("CompressedTexture2D_sxir3"), ExtResource("5_57cet")]]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jv3h8"]
-sky_top_color = Color(0.229599, 0.00256229, 0.139233, 1)
-sky_horizon_color = Color(0.5574, 0.500641, 0.534808, 1)
-sky_energy_multiplier = 0.25
-ground_bottom_color = Color(0, 0, 0, 1)
-ground_horizon_color = Color(0.5574, 0.500641, 0.534808, 1)
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_fh1mt"]
+panorama = ExtResource("14_jy5sk")
 
-[sub_resource type="Sky" id="Sky_a7ohw"]
-sky_material = SubResource("ProceduralSkyMaterial_jv3h8")
+[sub_resource type="Sky" id="Sky_dv446"]
+sky_material = SubResource("PanoramaSkyMaterial_fh1mt")
 
 [sub_resource type="Environment" id="Environment_jnqoi"]
 background_mode = 2
-background_energy_multiplier = 0.0
-sky = SubResource("Sky_a7ohw")
+background_energy_multiplier = 0.5
+sky = SubResource("Sky_dv446")
+ambient_light_color = Color(0.387389, 0.387389, 0.387389, 1)
 fog_mode = 1
 fog_light_color = Color(0, 0, 0, 1)
 fog_light_energy = 1.09
@@ -76,7 +74,7 @@ height = 1.0
 script = ExtResource("1_uof31")
 
 [node name="Block" type="StaticBody3D" parent="."]
-transform = Transform3D(20, 0, 0, 0, 3, 0, 0, 0, 20, 15.4825, 3.50734, 5.263)
+transform = Transform3D(20, 0, 0, 0, 3, 0, 0, 0, 20, -12.3535, 4.72802, 1.263)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Block"]
 shape = SubResource("BoxShape3D_wpjo8")
@@ -88,7 +86,7 @@ skeleton = NodePath("")
 surface_material_override/0 = ExtResource("1_uvkay")
 
 [node name="HTerrain" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.615, -7.555, 14.92)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1300, -7.68, 3.115)
 script = ExtResource("1_p1oq3")
 map_scale = Vector3(3, 3, 3)
 centered = true
@@ -108,7 +106,7 @@ shader_params/u_depth_blending = true
 shader_params/u_triplanar = true
 shader_params/u_tile_reduction = Vector4(1, 1, 1, 1)
 
-[node name="HTerrainDetailLayer" type="Node3D" parent="HTerrain"]
+[node name="Shrubs" type="Node3D" parent="HTerrain"]
 script = ExtResource("8_2yntv")
 texture = ExtResource("10_4wsgd")
 view_distance = 40.0
@@ -133,15 +131,16 @@ omni_range = 36.229
 omni_attenuation = 0.81
 
 [node name="Sun" type="DirectionalLight3D" parent="Env"]
-transform = Transform3D(-0.791221, -0.288979, 0.538943, 0, 0.881303, 0.472551, -0.61153, 0.373892, -0.697306, 0, 0, 0)
-light_energy = 1.688
+transform = Transform3D(-0.791221, -0.288979, 0.538944, 0, 0.881303, 0.472551, -0.61153, 0.373892, -0.697306, -136.314, -19.6508, 66.0325)
+light_energy = 2.538
 shadow_enabled = true
 directional_shadow_max_distance = 101.0
 
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("8_xpouo")
-sprint_speed = 7.5
+walk_speed = 75.0
+sprint_speed = 75.0
 jump_velocity = 4.5
 
 [node name="StandingCollision" type="CollisionShape3D" parent="Player"]
