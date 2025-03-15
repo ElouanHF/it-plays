@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://drg0huc0kbqwj"]
+[gd_scene load_steps=36 format=3 uid="uid://drg0huc0kbqwj"]
 
 [ext_resource type="Material" uid="uid://c1jlsf05or548" path="res://Materials/Rock.tres" id="1_60bpq"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_p1oq3"]
@@ -12,10 +12,11 @@
 [ext_resource type="Script" path="res://Scrips/player.gd" id="8_xpouo"]
 [ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="9_nj35r"]
 [ext_resource type="Texture2D" uid="uid://7adfefnajusx" path="res://Models/Bush_Asset/Bush_Asset/texture/Bush_00.png" id="10_4wsgd"]
-[ext_resource type="Shader" path="res://addons/zylann.hterrain/shaders/detail.gdshader" id="11_u613d"]
-[ext_resource type="ArrayMesh" uid="uid://dpef2d0qcn5d4" path="res://addons/zylann.hterrain/models/grass_quad_x2.obj" id="12_qaxrm"]
+[ext_resource type="ArrayMesh" uid="uid://doubwek5pksnc" path="res://Models/Bush_Asset/Bush_Asset/model/Bush_00.obj" id="11_wkurw"]
 [ext_resource type="PackedScene" uid="uid://cdgrbnh35w6ji" path="res://PauseMenu.tscn" id="12_s3cn2"]
 [ext_resource type="Texture2D" uid="uid://dvdxn14ubdmy8" path="res://Materials/NightSkyHDRI014_1K-HDR.exr" id="14_jy5sk"]
+[ext_resource type="PackedScene" uid="uid://bypnoqucrmtvm" path="res://Models/pine_tree_low-poly/scene.gltf" id="16_ldcbj"]
+[ext_resource type="PackedScene" uid="uid://dfrai7x2bowvd" path="res://Models/smol_trees/scene.gltf" id="17_7rcbh"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wpjo8"]
 
@@ -70,6 +71,137 @@ volumetric_fog_detail_spread = 0.5
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_uww4d"]
 height = 1.0
 
+[sub_resource type="BoxMesh" id="BoxMesh_jp1be"]
+
+[sub_resource type="Shader" id="Shader_evl7m"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.3.stable.mono's StandardMaterial3D.
+
+shader_type spatial;
+render_mode blend_mix, depth_draw_always, cull_back, diffuse_burley, specular_schlick_ggx;
+
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
+uniform float point_size : hint_range(0.1, 128.0, 0.1);
+
+uniform float roughness : hint_range(0.0, 1.0);
+uniform sampler2D texture_metallic : hint_default_white, filter_linear_mipmap, repeat_enable;
+uniform vec4 metallic_texture_channel;
+uniform sampler2D texture_roughness : hint_roughness_r, filter_linear_mipmap, repeat_enable;
+
+uniform float specular : hint_range(0.0, 1.0, 0.01);
+uniform float metallic : hint_range(0.0, 1.0, 0.01);
+
+uniform sampler2D texture_refraction : filter_linear_mipmap, repeat_enable;
+uniform float refraction : hint_range(-1.0, 1.0, 0.001);
+uniform vec4 refraction_texture_channel;
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
+
+uniform sampler2D texture_normal : hint_roughness_normal, filter_linear_mipmap, repeat_enable;
+uniform float normal_scale : hint_range(-16.0, 16.0);
+varying vec3 uv1_triplanar_pos;
+
+uniform float uv1_blend_sharpness : hint_range(0.0, 150.0, 0.001);
+varying vec3 uv1_power_normal;
+
+uniform vec3 uv1_scale;
+uniform vec3 uv1_offset;
+uniform vec3 uv2_scale;
+uniform vec3 uv2_offset;
+
+void vertex() {
+	vec3 normal = MODEL_NORMAL_MATRIX * NORMAL;
+
+	TANGENT = vec3(0.0, 0.0, -1.0) * abs(normal.x);
+	TANGENT += vec3(1.0, 0.0, 0.0) * abs(normal.y);
+	TANGENT += vec3(1.0, 0.0, 0.0) * abs(normal.z);
+	TANGENT = inverse(MODEL_NORMAL_MATRIX) * normalize(TANGENT);
+
+	BINORMAL = vec3(0.0, 1.0, 0.0) * abs(normal.x);
+	BINORMAL += vec3(0.0, 0.0, -1.0) * abs(normal.y);
+	BINORMAL += vec3(0.0, 1.0, 0.0) * abs(normal.z);
+	BINORMAL = inverse(MODEL_NORMAL_MATRIX) * normalize(BINORMAL);
+
+	// UV1 Triplanar: Enabled (with World Triplanar)
+	uv1_power_normal = pow(abs(normal), vec3(uv1_blend_sharpness));
+	uv1_triplanar_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz * uv1_scale + uv1_offset + TIME * 0.01;
+	uv1_power_normal /= dot(uv1_power_normal, vec3(1.0));
+	uv1_triplanar_pos *= vec3(1.0, -1.0, 1.0);
+}
+
+vec4 triplanar_texture(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos) {
+	vec4 samp = vec4(0.0);
+	samp += texture(p_sampler, p_triplanar_pos.xy) * p_weights.z;
+	samp += texture(p_sampler, p_triplanar_pos.xz) * p_weights.y;
+	samp += texture(p_sampler, p_triplanar_pos.zy * vec2(-1.0, 1.0)) * p_weights.x;
+	return samp;
+}
+
+void fragment() {
+	vec4 albedo_tex = triplanar_texture(texture_albedo, uv1_power_normal, uv1_triplanar_pos);
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+
+	float metallic_tex = dot(triplanar_texture(texture_metallic, uv1_power_normal, uv1_triplanar_pos), metallic_texture_channel);
+	METALLIC = metallic_tex * metallic;
+	SPECULAR = specular;
+
+	vec4 roughness_texture_channel = vec4(1.0, 0.0, 0.0, 0.0);
+	float roughness_tex = dot(triplanar_texture(texture_roughness, uv1_power_normal, uv1_triplanar_pos), roughness_texture_channel);
+	ROUGHNESS = roughness_tex * roughness;
+
+	// Normal Map: Enabled
+	NORMAL_MAP = triplanar_texture(texture_normal, uv1_power_normal, uv1_triplanar_pos).rgb;
+	NORMAL_MAP_DEPTH = normal_scale;
+
+	// Refraction: Enabled (with normal map texture)
+	vec3 unpacked_normal = NORMAL_MAP;
+	unpacked_normal.xy = unpacked_normal.xy * 2.0 - 1.0;
+	unpacked_normal.z = sqrt(max(0.0, 1.0 - dot(unpacked_normal.xy, unpacked_normal.xy)));
+	vec3 ref_normal = normalize(mix(
+			NORMAL,
+			TANGENT * unpacked_normal.x + BINORMAL * unpacked_normal.y + NORMAL * unpacked_normal.z,
+			NORMAL_MAP_DEPTH));
+	vec2 ref_ofs = SCREEN_UV - ref_normal.xy * dot(triplanar_texture(texture_refraction, uv1_power_normal, uv1_triplanar_pos), refraction_texture_channel) * refraction;
+
+	float ref_amount = 1.0 - albedo.a * albedo_tex.a;
+	EMISSION += textureLod(screen_texture, ref_ofs, ROUGHNESS * 8.0).rgb * ref_amount * EXPOSURE;
+	ALBEDO *= 1.0 - ref_amount;
+	// Force transparency on the material (required for refraction).
+	ALPHA = 1.0;
+}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qu73n"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_h6gs7"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_qu73n")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_876wy"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_qu73n")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ves2i"]
+render_priority = 0
+shader = SubResource("Shader_evl7m")
+shader_parameter/albedo = Color(0.0588235, 0.0784314, 0.192157, 0.803922)
+shader_parameter/point_size = 0.1
+shader_parameter/roughness = 0.55
+shader_parameter/metallic_texture_channel = null
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/refraction = 0.129
+shader_parameter/refraction_texture_channel = null
+shader_parameter/normal_scale = 1.0
+shader_parameter/uv1_blend_sharpness = 1.0
+shader_parameter/uv1_scale = Vector3(0.2, 0.2, 0.2)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/texture_refraction = SubResource("NoiseTexture2D_876wy")
+shader_parameter/texture_normal = SubResource("NoiseTexture2D_h6gs7")
+
 [node name="world" type="Node3D"]
 script = ExtResource("1_uof31")
 
@@ -86,12 +218,11 @@ skeleton = NodePath("")
 surface_material_override/0 = ExtResource("1_uvkay")
 
 [node name="HTerrain" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1300, -7.68, 3.115)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 826.521, -2.72, 9.345)
 script = ExtResource("1_p1oq3")
-map_scale = Vector3(3, 3, 3)
 centered = true
 _terrain_data = ExtResource("2_o4jo8")
-chunk_size = 32
+chunk_size = 64
 collision_enabled = true
 collision_layer = 1
 collision_mask = 1
@@ -106,18 +237,16 @@ shader_params/u_depth_blending = true
 shader_params/u_triplanar = true
 shader_params/u_tile_reduction = Vector4(1, 1, 1, 1)
 
-[node name="Shrubs" type="Node3D" parent="HTerrain"]
+[node name="HTerrainDetailLayer" type="Node3D" parent="HTerrain"]
 script = ExtResource("8_2yntv")
 texture = ExtResource("10_4wsgd")
-view_distance = 40.0
-custom_shader = ExtResource("11_u613d")
-density = 2.964
-instance_mesh = ExtResource("12_qaxrm")
-shader_params/u_globalmap_tint_bottom = null
-shader_params/u_globalmap_tint_top = null
-shader_params/u_bottom_ao = null
-shader_params/u_instance_scale = null
-shader_params/u_roughness = null
+density = 0.5
+instance_mesh = ExtResource("11_wkurw")
+shader_params/u_globalmap_tint_bottom = 0.01
+shader_params/u_globalmap_tint_top = 0.0
+shader_params/u_bottom_ao = 0.0
+shader_params/u_instance_scale = Vector3(0.15, 0.15, 0.15)
+shader_params/u_roughness = 1.0
 metadata/_editor_icon = ExtResource("9_nj35r")
 
 [node name="Env" type="Node3D" parent="."]
@@ -139,8 +268,7 @@ directional_shadow_max_distance = 101.0
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("8_xpouo")
-walk_speed = 75.0
-sprint_speed = 75.0
+sprint_speed = 7.5
 jump_velocity = 4.5
 
 [node name="StandingCollision" type="CollisionShape3D" parent="Player"]
@@ -177,6 +305,304 @@ light_energy = 2.697
 spot_range = 26.486
 spot_attenuation = 1.2
 spot_angle = 30.86
+
+[node name="Assets" type="Node3D" parent="."]
+
+[node name="Water" type="MeshInstance3D" parent="Assets"]
+transform = Transform3D(7296.25, 0, -6838.47, 0, 50, 0, 6838.47, 0, 7296.25, 857.221, -45.0594, 25.5775)
+mesh = SubResource("BoxMesh_jp1be")
+skeleton = NodePath("../Trees/Cluster_1/Sketchfab_Scene3")
+surface_material_override/0 = SubResource("ShaderMaterial_ves2i")
+
+[node name="Trees" type="Node3D" parent="Assets"]
+
+[node name="Cluster_1" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -25.2687, 0, 0)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -0.917391, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, 51.1551)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_1" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_1" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_1" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_Thin_1" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.32542, 0, -0.379607, 0, 0.5, 0, 0.379607, 0, 0.32542, -1.16689, -1.8639, -9.88491)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -3.13325, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.7447, -63.5365)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_Thin_1" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_2" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.44214, 0, -0.233479, 0, 0.5, 0, 0.233479, 0, 0.44214, -9.13454, -4.20748, 50.4271)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -0.717181, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729626, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729626, 22.8736, -4.09189, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -2.82538, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_2" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_2" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_2" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_3" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.274475, 0, -0.417928, 0, 0.5, 0, 0.417928, 0, 0.274475, 39.0513, -5.64794, -23.4488)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_3" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27662, -2.68413, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_3" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_3" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_3" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_3" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_3" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_3" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_4" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.199263, 0, -0.458579, 0, 0.5, 0, 0.458579, 0, 0.199263, -84.8209, 1.37124, -23.4488)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_4" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -0.717181, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_4" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_4" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_4" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_4" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_4" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_4" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_5" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.0357401, 0, -0.498721, 0, 0.5, 0, 0.498721, 0, 0.0357401, -66.5836, 2.72362, 29.0148)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_5" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -3.35023, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_5" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_5" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_5" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_5" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_5" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_5" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_6" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.0395862, 0, 0.49843, 0, 0.5, 0, -0.49843, 0, 0.0395862, -28.4673, 0, 43.014)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_6" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -0.917391, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_6" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_6" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_6" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_6" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_6" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_6" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_Thin_2" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.40418, 0, 0.294344, 0, 0.5, 0, -0.294344, 0, 0.40418, -36.413, 0, 18.2052)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -3.13325, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.7447, -63.5365)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_Thin_2" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_7" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.267751, 0, 0.422267, 0, 0.5, 0, -0.422267, 0, 0.267751, 23.0789, -1.79058, 30.9229)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_7" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -0.717181, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_7" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729626, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729626, 22.8736, -4.09189, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_7" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_7" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_7" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_7" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_7" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_8" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.438347, 0, 0.240525, 0, 0.5, 0, -0.240525, 0, 0.438347, -46.7501, 1.1144, -22.9607)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_8" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27662, -2.68413, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_8" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_8" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_8" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_8" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_8" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_8" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_9" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.472915, 0, 0.16233, 0, 0.5, 0, -0.16233, 0, 0.472915, -56.5574, 1.37124, 100.523)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_9" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -0.717181, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_9" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_9" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_9" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_9" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_9" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_9" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
+
+[node name="Cluster_10" type="Node3D" parent="Assets/Trees"]
+transform = Transform3D(0.499985, 0, -0.0038571, 0, 0.5, 0, 0.0038571, 0, 0.499985, -2.81457, -2.1729, 86.4963)
+
+[node name="Sketchfab_Scene" parent="Assets/Trees/Cluster_10" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 6.27661, -3.35023, -48.7167)
+
+[node name="Sketchfab_Scene3" parent="Assets/Trees/Cluster_10" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0729625, 0, -0.0683847, 0, 0.1, 0, 0.0683847, 0, 0.0729625, 22.8736, -3.21082, -15.0126)
+
+[node name="Sketchfab_Scene5" parent="Assets/Trees/Cluster_10" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0996135, 0, 0.00878339, 0, 0.1, 0, -0.00878339, 0, 0.0996135, 22.8736, -3.21082, -63.5364)
+
+[node name="Sketchfab_Scene6" parent="Assets/Trees/Cluster_10" instance=ExtResource("16_ldcbj")]
+transform = Transform3D(0.0965286, 0, -0.0261195, 0, 0.1, 0, 0.0261195, 0, 0.0965286, 44.4501, -3.79483, -40.1212)
+
+[node name="Sketchfab_Scene2" parent="Assets/Trees/Cluster_10" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 11.837, -3.80294, -43.7647)
+
+[node name="Sketchfab_Scene4" parent="Assets/Trees/Cluster_10" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.59365, 0, -1.20842, 0, 2, 0, 1.20842, 0, 1.59365, 25.447, -3.80294, -32.9784)
+
+[node name="Sketchfab_Scene7" parent="Assets/Trees/Cluster_10" instance=ExtResource("17_7rcbh")]
+transform = Transform3D(1.25321, 0, 1.55868, 0, 2, 0, -1.55868, 0, 1.25321, 40.7276, -3.80294, -32.9784)
 
 [node name="Pause Menu" parent="." instance=ExtResource("12_s3cn2")]
 visible = false
