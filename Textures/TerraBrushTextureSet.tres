@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="TextureSetsResource" load_steps=11 format=3 uid="uid://cgqw3oqtgmpnh"]
+
+[ext_resource type="Texture2D" uid="uid://oou7bg3hnkqv" path="res://Textures/ForestGrass/Grass002_1K-JPG_Color.jpg" id="1_6b5tc"]
+[ext_resource type="Texture2D" uid="uid://y0lslrwimdgj" path="res://Textures/ForestGrass/Grass002_1K-JPG_NormalGL.jpg" id="3_2neu1"]
+[ext_resource type="Texture2D" uid="uid://bndaqo7dgitdh" path="res://Textures/ForestGrass/Grass002_1K-JPG_Roughness.jpg" id="4_4g4k7"]
+[ext_resource type="Script" path="res://addons/terrabrush/Scripts/EditorResources/TextureSetResource.cs" id="5_8rp8f"]
+[ext_resource type="Texture2D" uid="uid://c1biv0bqo54mc" path="res://Textures/Dirt&Leaves/Ground040_1K-JPG_Color.jpg" id="5_dw2sc"]
+[ext_resource type="Script" path="res://addons/terrabrush/Scripts/EditorResources/TextureSetsResource.cs" id="6_6dkss"]
+[ext_resource type="Texture2D" uid="uid://cfr2i1fewri2i" path="res://Textures/Dirt&Leaves/Ground040_1K-JPG_NormalGL.jpg" id="6_xjdwa"]
+[ext_resource type="Texture2D" uid="uid://c35wscdbukag6" path="res://Textures/Dirt&Leaves/Ground040_1K-JPG_Roughness.jpg" id="7_p8v32"]
+
+[sub_resource type="Resource" id="Resource_qolhn"]
+script = ExtResource("5_8rp8f")
+Name = "Grass"
+AlbedoTexture = ExtResource("1_6b5tc")
+NormalTexture = ExtResource("3_2neu1")
+RoughnessTexture = ExtResource("4_4g4k7")
+TextureDetail = -1
+Triplanar = true
+
+[sub_resource type="Resource" id="Resource_wk6pf"]
+script = ExtResource("5_8rp8f")
+Name = "Leaves"
+AlbedoTexture = ExtResource("5_dw2sc")
+NormalTexture = ExtResource("6_xjdwa")
+RoughnessTexture = ExtResource("7_p8v32")
+TextureDetail = -1
+Triplanar = true
+
+[resource]
+script = ExtResource("6_6dkss")
+TextureSets = [SubResource("Resource_qolhn"), SubResource("Resource_wk6pf")]

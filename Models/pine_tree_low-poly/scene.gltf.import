@@ -16,7 +16,7 @@ dest_files=["res://.godot/imported/scene.gltf-c9870daac0bd7fc48c63896d4c6bce4c.s
 nodes/root_type=""
 nodes/root_name=""
 nodes/apply_root_scale=true
-nodes/root_scale=1.0
+nodes/root_scale=0.02
 nodes/import_as_skeleton_bones=false
 meshes/ensure_tangents=true
 meshes/generate_lods=true
@@ -31,6 +31,12 @@ animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:Sketchfab_model/Pine_Low-poly_1_fbx/RootNode/Pine_s_1_/Pine_s_1__Pine_s_1_Material_0": {
+"generate/navmesh": 0
+}
+}
+}
 gltf/naming_version=1
 gltf/embedded_image_handling=1

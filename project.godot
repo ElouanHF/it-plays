@@ -72,8 +72,8 @@ m_terrain/keymap/mpath_lock_z=Object(InputEventKey,"resource_local_to_scene":fal
 [application]
 
 config/name="It Plays"
-run/main_scene="res://Main.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+run/main_scene="res://Scenes/Main.tscn"
+config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [display]
@@ -87,7 +87,7 @@ project/assembly_name="It Plays"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gltf2meshlib/plugin.cfg", "res://addons/m_terrain/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg")
+enabled=PackedStringArray("res://addons/gltf2meshlib/plugin.cfg", "res://addons/m_terrain/plugin.cfg", "res://addons/terrabrush/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg")
 
 [input]
 
@@ -143,3 +143,7 @@ flashlight={
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[terraBrush]
+
+brushes/decal_color=Color(0.717647, 0, 0, 1)

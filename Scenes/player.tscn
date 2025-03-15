@@ -1,0 +1,49 @@
+[gd_scene load_steps=4 format=3 uid="uid://cg0kyqkhs3ksi"]
+
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_oqjq1"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r26nq"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0atcg"]
+height = 1.0
+
+[node name="Player" type="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21.1912, 0)
+script = ExtResource("1_oqjq1")
+sprint_speed = 7.5
+jump_velocity = 4.5
+
+[node name="StandingCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.999586, 0)
+shape = SubResource("CapsuleShape3D_r26nq")
+
+[node name="CrouchingCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.521412, 0)
+shape = SubResource("CapsuleShape3D_0atcg")
+disabled = true
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.01517, 0)
+target_position = Vector3(0, 1, 0)
+debug_shape_custom_color = Color(0, 0, 1, 1)
+debug_shape_thickness = 5
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+
+[node name="Flashlight" type="Node3D" parent="Head"]
+
+[node name="CenterBeam" type="SpotLight3D" parent="Head/Flashlight"]
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 6.01
+spot_range = 26.486
+spot_angle = 22.3
+
+[node name="OuterBeam" type="SpotLight3D" parent="Head/Flashlight"]
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 2.697
+spot_range = 26.486
+spot_attenuation = 1.2
+spot_angle = 30.86

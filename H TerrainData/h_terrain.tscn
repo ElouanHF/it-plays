@@ -1,0 +1,60 @@
+[gd_scene load_steps=15 format=3 uid="uid://dxa807g12gwdu"]
+
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="1_p05rl"]
+[ext_resource type="Resource" path="res://H TerrainData/data.hterrain" id="2_rf65p"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_wfxhe"]
+[ext_resource type="Texture2D" uid="uid://cxenp4pwbl1s0" path="res://Textures/TerrainTextures/Main_slot2_albedo_bump.png" id="4_io8iw"]
+[ext_resource type="Texture2D" uid="uid://dqhw43ln82k8g" path="res://Textures/TerrainTextures/Main_slot2_normal_roughness.png" id="5_xb8gc"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_detail_layer.gd" id="6_pwbm6"]
+[ext_resource type="Texture2D" uid="uid://7adfefnajusx" path="res://Models/Bush_Asset/texture/Bush_00.png" id="7_ahehh"]
+[ext_resource type="ArrayMesh" uid="uid://doubwek5pksnc" path="res://Models/Bush_Asset/model/Bush_00.obj" id="8_idbgu"]
+[ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="9_5wr0t"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sy8qk"]
+load_path = "res://.godot/imported/Main_slot0_albedo_bump.png-7b110bc0cfb8813eb18d63f0a7f0f53f.s3tc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gseal"]
+load_path = "res://.godot/imported/Main_slot1_albedo_bump.png-0b8ac72bbc3413991858a6443e79cbd8.s3tc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_7x4kb"]
+load_path = "res://.godot/imported/Main_slot0_normal_roughness.png-d58d515d4f478e7a9b03f315e78168c5.s3tc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sxir3"]
+load_path = "res://.godot/imported/Main_slot1_normal_roughness.png-7b99383ec778711614aada585e933724.s3tc.ctex"
+
+[sub_resource type="Resource" id="Resource_1eucg"]
+script = ExtResource("3_wfxhe")
+mode = 0
+textures = [[SubResource("CompressedTexture2D_sy8qk"), SubResource("CompressedTexture2D_gseal"), ExtResource("4_io8iw")], [SubResource("CompressedTexture2D_7x4kb"), SubResource("CompressedTexture2D_sxir3"), ExtResource("5_xb8gc")]]
+
+[node name="HTerrain" type="Node3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 826.521, -2.72, 9.345)
+script = ExtResource("1_p05rl")
+centered = true
+_terrain_data = ExtResource("2_rf65p")
+chunk_size = 64
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_1eucg")
+render_layers = 1
+cast_shadow = 1
+shader_params/u_ground_uv_scale = 1.1
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = true
+shader_params/u_tile_reduction = Vector4(1, 1, 1, 1)
+
+[node name="HTerrainDetailLayer" type="Node3D" parent="."]
+script = ExtResource("6_pwbm6")
+texture = ExtResource("7_ahehh")
+density = 0.5
+instance_mesh = ExtResource("8_idbgu")
+shader_params/u_globalmap_tint_bottom = 0.01
+shader_params/u_globalmap_tint_top = 0.0
+shader_params/u_bottom_ao = 0.0
+shader_params/u_instance_scale = Vector3(0.15, 0.15, 0.15)
+shader_params/u_roughness = 1.0
+metadata/_editor_icon = ExtResource("9_5wr0t")
