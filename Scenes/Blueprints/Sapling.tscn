@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cbcp8awb0rvb2"]
+
+[ext_resource type="PackedScene" uid="uid://dfrai7x2bowvd" path="res://Models/smol_trees/scene.gltf" id="1_4jy1x"]
+[ext_resource type="Script" path="res://Scripts/DisableOnStart.gd" id="1_jrjla"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8kowe"]
+
+[node name="Sapling" type="Area3D" groups=["TerrainObject"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+script = ExtResource("1_jrjla")
+
+[node name="Sketchfab_Scene" parent="." instance=ExtResource("1_4jy1x")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38415, 0)
+shape = SubResource("BoxShape3D_8kowe")

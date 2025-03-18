@@ -78,8 +78,8 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=3840
-window/size/viewport_height=2160
+window/size/viewport_width=2000
+window/size/viewport_height=1000
 
 [dotnet]
 
@@ -88,6 +88,10 @@ project/assembly_name="It Plays"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gltf2meshlib/plugin.cfg", "res://addons/m_terrain/plugin.cfg", "res://addons/terrabrush/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg")
+
+[global_group]
+
+TerrainObject=""
 
 [input]
 

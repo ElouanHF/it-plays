@@ -1,7 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://cyo0lhrupgpt"]
+[gd_scene load_steps=6 format=3 uid="uid://cyo0lhrupgpt"]
 
 [ext_resource type="ArrayMesh" uid="uid://doubwek5pksnc" path="res://Models/Bush_Asset/model/Bush_00.obj" id="1_0qdsn"]
+[ext_resource type="Script" path="res://Scripts/DisableOnStart.gd" id="1_h8roo"]
 [ext_resource type="Texture2D" uid="uid://7adfefnajusx" path="res://Models/Bush_Asset/texture/Bush_00.png" id="2_yjn5w"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_0grsr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n3sct"]
 transparency = 2
@@ -10,7 +13,12 @@ alpha_antialiasing_mode = 0
 cull_mode = 2
 albedo_texture = ExtResource("2_yjn5w")
 
-[node name="Bush" type="Node3D"]
+[node name="Bush" type="Area3D" groups=["TerrainObject"]]
+script = ExtResource("1_h8roo")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.39038, 0)
+shape = SubResource("SphereShape3D_0grsr")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = ExtResource("1_0qdsn")

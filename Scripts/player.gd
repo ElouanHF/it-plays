@@ -6,6 +6,7 @@ extends CharacterBody3D
 @onready var ray_cast_3d: RayCast3D = $RayCast3D
 @onready var main = $"../"
 @onready var flashlight: Node3D = $Head/Flashlight
+@onready var area_3d: Area3D = $Area3D
 
 var speed_current = 0
 var direction = Vector3.ZERO
@@ -77,3 +78,19 @@ func toggleLight():
 	else:
 		flashlight.show()
 		flashlight_on = true
+
+func _on_area_3d_body_entered(body: Node3D) -> void:
+	if body.is_in_group("TerrainObject"):
+		body.show()
+
+func _on_area_3d_body_exited(body: Node3D) -> void:
+	if body.is_in_group("TerrainObject"):
+		body.hide()
+
+func _on_area_3d_area_entered(area: Area3D) -> void:
+	if area.is_in_group("TerrainObject"):
+		area.show()
+
+func _on_area_3d_area_exited(area: Area3D) -> void:
+	if area.is_in_group("TerrainObject"):
+		area.hide()

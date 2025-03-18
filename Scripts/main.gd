@@ -17,5 +17,5 @@ func pauseMenu():
 	else:
 		pause_menu.show()
 		Engine.time_scale = 0
-		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		paused = true
