@@ -1,4 +1,4 @@
-[gd_scene load_steps=238 format=3 uid="uid://drg0huc0kbqwj"]
+[gd_scene load_steps=239 format=3 uid="uid://drg0huc0kbqwj"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_uof31"]
 [ext_resource type="PackedScene" uid="uid://cx71ii257xseh" path="res://Models/Pine.tscn" id="6_c4e8h"]
@@ -189,6 +189,7 @@
 [ext_resource type="Texture2D" uid="uid://dl8527paeujg8" path="res://TerraBrushData/Object_4_2_2.res" id="169_h363u"]
 [ext_resource type="Texture2D" uid="uid://cppymdyul8vsm" path="res://TerraBrushData/Object_4_3_2.res" id="176_p60a4"]
 [ext_resource type="Texture2D" uid="uid://dvy6mv2yq8mnr" path="res://TerraBrushData/Object_4_4_2.res" id="183_tnu6o"]
+[ext_resource type="PackedScene" uid="uid://cafqa0qynlvkg" path="res://Scenes/Blueprints/Monster.tscn" id="190_jdx2s"]
 
 [sub_resource type="Gradient" id="Gradient_a180a"]
 
@@ -562,14 +563,13 @@ background_mode = 2
 background_energy_multiplier = 0.5
 sky = SubResource("Sky_dv446")
 ambient_light_color = Color(0.387389, 0.387389, 0.387389, 1)
-fog_mode = 1
+fog_enabled = true
 fog_light_color = Color(0, 0, 0, 1)
 fog_light_energy = 0.97
-fog_density = 1.0
-fog_height = -10.0
+fog_height_density = -0.15
 fog_depth_curve = 0.108819
 fog_depth_begin = 0.0
-fog_depth_end = 50.0
+fog_depth_end = 40.0
 volumetric_fog_density = 1.0
 volumetric_fog_albedo = Color(0, 0, 0, 1)
 volumetric_fog_emission_energy = 378.26
@@ -606,6 +606,7 @@ omni_attenuation = 0.81
 
 [node name="Sun" type="DirectionalLight3D" parent="Env"]
 transform = Transform3D(-0.791221, -0.288979, 0.538944, 0.483824, 0.24319, 0.840698, -0.37401, 0.925931, -0.052601, -136.314, -19.6508, 66.0325)
+visible = false
 light_energy = 2.538
 shadow_enabled = true
 shadow_bias = 0.0
@@ -620,3 +621,6 @@ collision_priority = 1e+09
 
 [node name="Pause Menu" parent="." instance=ExtResource("12_s3cn2")]
 visible = false
+
+[node name="Monster2" parent="." instance=ExtResource("190_jdx2s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.19283, 10.7664, -4.63281)

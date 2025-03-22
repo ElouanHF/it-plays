@@ -1,0 +1,339 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://c87ysj4wr5xl5"
+path="res://.godot/imported/demon-RIG.blend-0993a9b25342440586337c8759548892.scn"
+
+[deps]
+
+source_file="res://Models/Monster/demon/demon-RIG.blend"
+dest_files=["res://.godot/imported/demon-RIG.blend-0993a9b25342440586337c8759548892.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+_subresources={
+"nodes": {
+"PATH:Armature_001": {
+"import/skip_import": true
+},
+"PATH:Armature_001/Skeleton3D": {
+"rest_pose/external_animation_library": null
+},
+"PATH:Camera": {
+"import/skip_import": true
+},
+"PATH:Hemi": {
+"import/skip_import": true
+},
+"PATH:Lamp": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-foot_ik_L": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-foot_ik_R": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-hand_ik_L": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-hand_ik_R": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-thigh_pole_L": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-thigh_pole_R": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-upper_arm_000": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-upper_arm_001": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-upper_arm_002": {
+"import/skip_import": true
+},
+"PATH:WGT-VIS-upper_arm_pol": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_01_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_01_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_02_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_02_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_03_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_03_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_index_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_000": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_001": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_002": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_003": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_004": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_005": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_006": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_007": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_008": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_01_": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_02_": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_03_": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_middle_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_01_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_01_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_02_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_02_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_03_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_03_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_pinky_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_01_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_01_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_02_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_02_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_03_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_03_R": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_L": {
+"import/skip_import": true
+},
+"PATH:WGT-finger_ring_R": {
+"import/skip_import": true
+},
+"PATH:WGT-foot_L": {
+"import/skip_import": true
+},
+"PATH:WGT-foot_R": {
+"import/skip_import": true
+},
+"PATH:WGT-foot_ik_L": {
+"import/skip_import": true
+},
+"PATH:WGT-foot_ik_R": {
+"import/skip_import": true
+},
+"PATH:WGT-foot_roll_L": {
+"import/skip_import": true
+},
+"PATH:WGT-foot_roll_R": {
+"import/skip_import": true
+},
+"PATH:WGT-forearm_L": {
+"import/skip_import": true
+},
+"PATH:WGT-forearm_R": {
+"import/skip_import": true
+},
+"PATH:WGT-hand_L": {
+"import/skip_import": true
+},
+"PATH:WGT-hand_R": {
+"import/skip_import": true
+},
+"PATH:WGT-hand_ik_L": {
+"import/skip_import": true
+},
+"PATH:WGT-hand_ik_R": {
+"import/skip_import": true
+},
+"PATH:WGT-head": {
+"import/skip_import": true
+},
+"PATH:WGT-hips": {
+"import/skip_import": true
+},
+"PATH:WGT-neck": {
+"import/skip_import": true
+},
+"PATH:WGT-palm_L": {
+"import/skip_import": true
+},
+"PATH:WGT-palm_R": {
+"import/skip_import": true
+},
+"PATH:WGT-ribs": {
+"import/skip_import": true
+},
+"PATH:WGT-root": {
+"import/skip_import": true
+},
+"PATH:WGT-shin_L": {
+"import/skip_import": true
+},
+"PATH:WGT-shin_R": {
+"import/skip_import": true
+},
+"PATH:WGT-shoulder_L": {
+"import/skip_import": true
+},
+"PATH:WGT-shoulder_R": {
+"import/skip_import": true
+},
+"PATH:WGT-thigh_L": {
+"import/skip_import": true
+},
+"PATH:WGT-thigh_R": {
+"import/skip_import": true
+},
+"PATH:WGT-thigh_pole_L": {
+"import/skip_import": true
+},
+"PATH:WGT-thigh_pole_R": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_01_L": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_01_R": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_02_L": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_02_R": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_03_L": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_03_R": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_L": {
+"import/skip_import": true
+},
+"PATH:WGT-thumb_R": {
+"import/skip_import": true
+},
+"PATH:WGT-toe_L": {
+"import/skip_import": true
+},
+"PATH:WGT-toe_R": {
+"import/skip_import": true
+},
+"PATH:WGT-upper_arm_L": {
+"import/skip_import": true
+},
+"PATH:WGT-upper_arm_R": {
+"import/skip_import": true
+},
+"PATH:WGT-upper_arm_pole_L": {
+"import/skip_import": true
+},
+"PATH:WGT-upper_arm_pole_R": {
+"import/skip_import": true
+},
+"PATH:rig/Skeleton3D": {
+"rest_pose/external_animation_library": null
+}
+}
+}
+blender/nodes/visible=0
+blender/nodes/active_collection_only=false
+blender/nodes/punctual_lights=true
+blender/nodes/cameras=true
+blender/nodes/custom_properties=true
+blender/nodes/modifiers=1
+blender/meshes/colors=false
+blender/meshes/uvs=true
+blender/meshes/normals=true
+blender/meshes/tangents=true
+blender/meshes/skins=2
+blender/meshes/export_bones_deforming_mesh_only=false
+blender/materials/unpack_enabled=true
+blender/materials/export_materials=1
+blender/animation/limit_playback=true
+blender/animation/always_sample=true
+blender/animation/group_tracks=true

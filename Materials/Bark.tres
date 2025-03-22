@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://omktjlq82m6v" path="res://Textures/Bark/Bark001_1K-JPG_Roughness.jpg" id="4_tj6y3"]
 
 [resource]
-cull_mode = 1
+cull_mode = 2
 albedo_texture = ExtResource("1_bbj4s")
 roughness_texture = ExtResource("4_tj6y3")
 normal_enabled = true
